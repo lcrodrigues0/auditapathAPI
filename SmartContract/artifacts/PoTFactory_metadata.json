@@ -1,0 +1,202 @@
+{
+	"compiler": {
+		"version": "0.8.28+commit.7893614a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "Echo",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "Hello",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "echo",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "flowAddr",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "flowId",
+						"type": "string"
+					}
+				],
+				"name": "getFlowCompliance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "success",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fail",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nil",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "flowId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "egress_edgeAddr",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "routeId",
+						"type": "string"
+					}
+				],
+				"name": "newFlow",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "flowId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "id_x",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "hash",
+						"type": "string"
+					}
+				],
+				"name": "setFlowProbeHash",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "flowId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "newRouteID",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "newEgressEdge",
+						"type": "address"
+					}
+				],
+				"name": "setRouteId",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PoT.sol": "PoTFactory"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PoT.sol": {
+			"keccak256": "0x039ab80019f0e67a6aa996239323042e29a6a9a00bc781760f2b9dfae9a5b6a5",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://aacfea345ca2f0abe3c3fa1fe5b9e6acd67f507137af9b5bf5f8a8bc3d2daf8f",
+				"dweb:/ipfs/QmW4PdNpwzxEXxhm9rhZgegDJGg7QbPRAr84XmnxqxJC35"
+			]
+		}
+	},
+	"version": 1
+}

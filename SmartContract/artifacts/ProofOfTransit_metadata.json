@@ -1,0 +1,287 @@
+{
+	"compiler": {
+		"version": "0.8.28+commit.7893614a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "controllerAddr",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "egress_edgeAddr",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "routeId",
+						"type": "string"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldController",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newController",
+						"type": "address"
+					}
+				],
+				"name": "ControllerSet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "ProbeFail",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newController",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "senderAddr",
+						"type": "address"
+					}
+				],
+				"name": "changeController",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "newRouteId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "newEgressEdge",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "senderAddr",
+						"type": "address"
+					}
+				],
+				"name": "changeRouteIdAndEgressEdge",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getCompliance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getController",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "id_x",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "sig",
+						"type": "string"
+					}
+				],
+				"name": "logProbe",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "probHash",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "routeIdHistory",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "route_id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "egress_edge",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "last_timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "route_id_audit",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "probeFailAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "probeNullAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "probeSuccessAmount",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "id_x",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "hash",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "senderAddr",
+						"type": "address"
+					}
+				],
+				"name": "setProbeHash",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PoT.sol": "ProofOfTransit"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PoT.sol": {
+			"keccak256": "0x039ab80019f0e67a6aa996239323042e29a6a9a00bc781760f2b9dfae9a5b6a5",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://aacfea345ca2f0abe3c3fa1fe5b9e6acd67f507137af9b5bf5f8a8bc3d2daf8f",
+				"dweb:/ipfs/QmW4PdNpwzxEXxhm9rhZgegDJGg7QbPRAr84XmnxqxJC35"
+			]
+		}
+	},
+	"version": 1
+}
