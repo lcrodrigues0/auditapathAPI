@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.28+commit.7893614a"
+		"version": "0.8.26+commit.8a97fa7a"
 	},
 	"language": "Solidity",
 	"output": {
@@ -100,6 +100,29 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "id_x",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "hash",
+						"type": "string"
+					}
+				],
+				"name": "logFlowProbeHash",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "flowId",
+						"type": "string"
+					},
+					{
 						"internalType": "address",
 						"name": "egress_edgeAddr",
 						"type": "address"
@@ -177,7 +200,7 @@
 		"compilationTarget": {
 			"PoT.sol": "PoTFactory"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "shanghai",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -190,11 +213,11 @@
 	},
 	"sources": {
 		"PoT.sol": {
-			"keccak256": "0x039ab80019f0e67a6aa996239323042e29a6a9a00bc781760f2b9dfae9a5b6a5",
+			"keccak256": "0x5265365c284f3391f5255aa8b246fde4770a44aca7f081a2cbc07e86ff653710",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://aacfea345ca2f0abe3c3fa1fe5b9e6acd67f507137af9b5bf5f8a8bc3d2daf8f",
-				"dweb:/ipfs/QmW4PdNpwzxEXxhm9rhZgegDJGg7QbPRAr84XmnxqxJC35"
+				"bzz-raw://b36716a3e6d9dc9c137f9e75c4fdeb1123abfe8c60644d0d3f441eef03fa5890",
+				"dweb:/ipfs/QmTZiJ9NsJz37gW1TU1WBSpPT5Hm2xQgpHYxxSw5TNXJT3"
 			]
 		}
 	},

@@ -33,8 +33,8 @@ contract ProofOfTransit{
         _;
     }
 
-    modifier isEgressEdge() {
-        require(msg.sender == egress_edge, "Caller is not egress edge");
+    modifier isEgressEdge(address senderAddr) {
+        require(senderAddr == egress_edge, "Caller is not egress edge");
         _;
     }
 
@@ -76,7 +76,7 @@ contract ProofOfTransit{
 
     event ProbeFail();
 
-    function logProbe(string memory id_x,string memory sig) public isEgressEdge{
+    function logProbe(string memory id_x,string memory sig, address senderAddr) public isEgressEdge(senderAddr){
         if (compareStrings(probHash[id_x],"")) {
             route_id_audit[current_routeID].probeNullAmount += 1;
         } else if (compareStrings(probHash[id_x],sig)){
@@ -127,11 +127,16 @@ contract PoTFactory{
         pot.setProbeHash(id_x,hash,msg.sender);
     }
 
+    function logFlowProbeHash(string memory flowId, string memory id_x, string memory hash) public{
+        ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
+        
+        pot.logProbe(id_x,hash,msg.sender);
+    }
+
 
     function setRouteId(string memory flowId,string memory newRouteID, address newEgressEdge) public{
         ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
         
-       
         pot.changeRouteIdAndEgressEdge(newRouteID,newEgressEdge,msg.sender);
     }
 

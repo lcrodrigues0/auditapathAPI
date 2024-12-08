@@ -14,11 +14,37 @@ if w3.is_connected():
 else:
     print("Falha na conexão com Ganache.")
 
-# Substitua pelo endereço do seu contrato
-contract_address = '0xBE798e0F0f8a3eea246eDAB36Fcd7ff43C712F75'
+# Endereço do contrato
+contract_address = '0x965FA8d25f77a54D3f00fF051248C3BEC164435e'
 
-# ABI do contrato (cole aqui o ABI do Remix)
+# ABI do contrato 
 abi = [
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "message",
+				"type": "string"
+			}
+		],
+		"name": "Echo",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "Hello",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
 	{
 		"inputs": [
 			{
@@ -33,17 +59,75 @@ abi = [
 		"type": "function"
 	},
 	{
-		"anonymous": False,
 		"inputs": [
 			{
-				"indexed": False,
 				"internalType": "string",
-				"name": "message",
+				"name": "",
 				"type": "string"
 			}
 		],
-		"name": "Echo",
-		"type": "event"
+		"name": "flowAddr",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "flowId",
+				"type": "string"
+			}
+		],
+		"name": "getFlowCompliance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "success",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "fail",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "nil",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "flowId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "id_x",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "hash",
+				"type": "string"
+			}
+		],
+		"name": "logFlowProbeHash",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -113,80 +197,30 @@ abi = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "flowAddr",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			}
-		],
-		"name": "getFlowCompliance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "success",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fail",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "nil",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "Hello",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
 	}
 ]
 
 # Obter instância do contrato
 contract = w3.eth.contract(address=contract_address, abi=abi)
-# Endereço da conta que vai enviar a transação (substitua pelo seu endereço)
-sender_address = "0xc72DEC353222ae87a3863356c4D07A1FaE64B89c"
-# Chave privada para assinar a transação (não use em produção sem proteger a chave!)
-private_key = "0x537a710174774a43d072790353b50106b483a69f1969db337d83b8b85a9ee6b9"
+
+# Endereço da controller
+sender_address = "0x62fE12d237d76eb19Fca7b66C91440659c04627e"
+# Chave privada para assinar a transação (não usar em produção sem proteger a chave)
+private_key = "0xac4bc58836108072d9ae42e4930fbad3626cef8d9e2add14f9a4950ceac87c96"
+
+# Endereço do nó de saída
+egress_address = "0xA70a148B4df4E66a056fE2F78d6c8083792bB721"
+# Chave privada para assinar a transação (não usar em produção sem proteger a chave)
+egress_private_key = "0x6d93f018b02f0e8d6cb7d406bebce58778b0f2e1a1d122350418f47ebfebc4e2"
+
+# Endereço do auditor
+auditor_address = "0xA70a148B4df4E66a056fE2F78d6c8083792bB721"
+# Chave privada auditor para assinar a transação (não usar em produção sem proteger a chave)
+auditor_private_key = "0x6d93f018b02f0e8d6cb7d406bebce58778b0f2e1a1d122350418f47ebfebc4e2"
 
 # Função para chamar `echo` e emitir o evento
 def call_echo(message):
-    # Prepare a transação para chamar a função `echo`
+    # Prepara a transação para chamar a função `echo`
     transaction = contract.functions.echo(message).build_transaction({
         'from': sender_address,
         'gas': 2000000,
@@ -194,15 +228,82 @@ def call_echo(message):
         'nonce': w3.eth.get_transaction_count(sender_address),
     })
 
-    # Assine a transação com a chave privada
+    # Assina a transação com a chave privada
     signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
 
-    # Envie a transação
+    # Envia a transação
     tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
 
     return w3.to_hex(tx_hash)
 
-infos = []
+# Função para chamar `newFlow`
+def call_newFlow(newFlowContract):
+    # Prepara a transação para chamar a função `newFlow`
+    transaction = contract.functions.newFlow(newFlowContract['flowId'], newFlowContract['edgeAddr'], newFlowContract['routeId']).build_transaction({
+        'from': sender_address,
+        'gas': 2000000,
+        'gasPrice': w3.to_wei('20', 'gwei'),
+        'nonce': w3.eth.get_transaction_count(sender_address),
+    })
+
+    # Assina a transação com a chave privada
+    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
+
+    # Envia a transação
+    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+
+    return w3.to_hex(tx_hash)
+
+
+# Função para chamar `setFlowProbeHash` e emitir o evento
+def call_setFlowProbeHash(newRefSig):
+    # Prepara a transação para chamar a função `setFlowProbeHash`
+    transaction = contract.functions.setFlowProbeHash(newRefSig['flowId'], newRefSig['timestamp'], newRefSig['lightMultSig']).build_transaction({
+        'from': sender_address,
+        'gas': 2000000,
+        'gasPrice': w3.to_wei('20', 'gwei'),
+        'nonce': w3.eth.get_transaction_count(sender_address),
+    })
+
+    # Assina a transação com a chave privada
+    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
+
+    # Envia a transação
+    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+
+    return w3.to_hex(tx_hash)
+
+# Função para chamar `logProbe` e emitir o evento
+def call_logFlowProbeHash(newlogProbe):
+    # Prepara a transação para chamar a função `logProbe`
+    transaction = contract.functions.logFlowProbeHash(newlogProbe['flowId'], newlogProbe['timestamp'], newlogProbe['lightMultSig']).build_transaction({
+        'from': egress_address,
+        'gas': 2000000,
+        'gasPrice': w3.to_wei('20', 'gwei'),
+        'nonce': w3.eth.get_transaction_count(egress_address),
+    })
+
+    # Assina a transação com a chave privada
+    signed_transaction = w3.eth.account.sign_transaction(transaction, egress_private_key)
+
+    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+
+    tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
+    if tx_receipt:
+        if tx_receipt['status'] == 1:
+            print("logProbe: A transação foi executada com sucesso.")
+        else:
+            print("logProbe: A transação falhou.")
+    else:
+        print("logProbe: A transação ainda está pendente.")
+
+    return w3.to_hex(tx_hash)
+
+def call_getFlowCompliance(flowId):
+    # Chamar a função `getFlowCompliance`
+    success, fail, nil = contract.functions.getFlowCompliance(flowId).call()    
+
+    return success, fail, nil   
 
 @app.route('/')
 def home():
@@ -226,9 +327,18 @@ def deployFlowContract():
         "edgeAddr": data['edgeAddr']
     }
 
-    infos.append(newFlowContract)
+    tx_hash = call_newFlow(newFlowContract)
 
-    return jsonify(newFlowContract), 201
+    tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
+    if tx_receipt:
+        if tx_receipt['status'] == 1:
+            print("deployFlowContract: A transação foi executada com sucesso.")
+        else:
+            print("deployFlowContract: A transação falhou.")
+    else:
+        print("deployFlowContract: A transação ainda está pendente.")
+
+    return jsonify(tx_hash), 201
 
 @app.route('/setRefSig', methods=['POST'])
 def setRefSig():
@@ -245,9 +355,18 @@ def setRefSig():
         "lightMultSig": data['lightMultSig'],
     }
 
-    infos.append(newRefSig)
+    tx_hash = call_setFlowProbeHash(newRefSig)
 
-    return jsonify(newRefSig), 201
+    tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
+    if tx_receipt:
+        if tx_receipt['status'] == 1:
+            print("setRefSig: A transação foi executada com sucesso.")
+        else:
+            print("setRefSig: A transação falhou.")
+    else:
+        print("setRefSig: A transação ainda está pendente.")
+
+    return jsonify(tx_hash), 201
 
 @app.route('/logProbe', methods=['POST'])
 def logProbe():
@@ -264,10 +383,21 @@ def logProbe():
         "lightMultSig": data['lightMultSig'],
     }
 
-    infos.append(newlogProbe)
+    tx_hash = call_logFlowProbeHash(newlogProbe)
 
-    return jsonify(newlogProbe), 201
+    return jsonify(tx_hash), 201
 
+@app.route('/getFlowCompliance/<flowId>', methods=['GET'])
+def setFlowCompliance(flowId):
+    success, fail, nil = call_getFlowCompliance(flowId)
+
+    flowCompliance = {
+        "success": success, 
+        "fail": fail,
+        "nil": nil, 
+    }
+
+    return jsonify(flowCompliance, 201)
 
 
 if __name__ == "__main__":
