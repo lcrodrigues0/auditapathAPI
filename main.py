@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from web3 import Web3
+import json
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,199 +16,27 @@ if w3.is_connected():
 else:
     print("Falha na conexão com Ganache.")
 
-# Endereço do contrato
-contract_address = '0x965FA8d25f77a54D3f00fF051248C3BEC164435e'
+## Endereço do contrato ##
+contract_address = '0xbc04c5C300158d3193B2cE3a600615275c50eE3C'
 
-# ABI do contrato 
-abi = [
-	{
-		"anonymous": False,
-		"inputs": [
-			{
-				"indexed": False,
-				"internalType": "string",
-				"name": "message",
-				"type": "string"
-			}
-		],
-		"name": "Echo",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "Hello",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "message",
-				"type": "string"
-			}
-		],
-		"name": "echo",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "flowAddr",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			}
-		],
-		"name": "getFlowCompliance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "success",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fail",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "nil",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "id_x",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "hash",
-				"type": "string"
-			}
-		],
-		"name": "logFlowProbeHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "egress_edgeAddr",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "routeId",
-				"type": "string"
-			}
-		],
-		"name": "newFlow",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "id_x",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "hash",
-				"type": "string"
-			}
-		],
-		"name": "setFlowProbeHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "flowId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "newRouteID",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "newEgressEdge",
-				"type": "address"
-			}
-		],
-		"name": "setRouteId",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-]
+## ABI do contrato ## 
+ # Path arquivo abi
+smart_contract_name = 'PoTFactory'
+abi_file_path = f'SmartContract/artifacts/{smart_contract_name}_metadata.json'
+ # Carregando a abi do arquivo json
+with open(abi_file_path, 'r') as json_file:
+    data = json.load(json_file)
+    
+abi = data['output']['abi']
+
 
 # Obter instância do contrato
 contract = w3.eth.contract(address=contract_address, abi=abi)
 
 # Endereço da controller
-sender_address = "0x62fE12d237d76eb19Fca7b66C91440659c04627e"
+sender_address = "0xB555b592b3175ce7E6d3DA77EF4bCfb3Af36b18F"
 # Chave privada para assinar a transação (não usar em produção sem proteger a chave)
-private_key = "0xac4bc58836108072d9ae42e4930fbad3626cef8d9e2add14f9a4950ceac87c96"
+private_key = "0xa01309c897ee3ffefa153606e954d86b4db94fbc37bef8dc6d37817a1d4dc4c6"
 
 # Endereço do nó de saída
 egress_address = "0xA70a148B4df4E66a056fE2F78d6c8083792bB721"
