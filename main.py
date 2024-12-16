@@ -17,7 +17,7 @@ else:
     print("Falha na conexão com Ganache.")
 
 ## Endereço do contrato ##
-contract_address = '0xbc04c5C300158d3193B2cE3a600615275c50eE3C'
+contract_address = '0x9CC81De7A749502D6B19Af7CD180BeBF3AD65B02'
 
 ## ABI do contrato ## 
  # Path arquivo abi
@@ -33,20 +33,18 @@ abi = data['output']['abi']
 # Obter instância do contrato
 contract = w3.eth.contract(address=contract_address, abi=abi)
 
+## Ganache accounts ##
+
 # Endereço da controller
-sender_address = "0xB555b592b3175ce7E6d3DA77EF4bCfb3Af36b18F"
-# Chave privada para assinar a transação (não usar em produção sem proteger a chave)
-private_key = "0xa01309c897ee3ffefa153606e954d86b4db94fbc37bef8dc6d37817a1d4dc4c6"
+sender_address = w3.eth.accounts[1]
 
 # Endereço do nó de saída
-egress_address = "0xA70a148B4df4E66a056fE2F78d6c8083792bB721"
-# Chave privada para assinar a transação (não usar em produção sem proteger a chave)
-egress_private_key = "0x6d93f018b02f0e8d6cb7d406bebce58778b0f2e1a1d122350418f47ebfebc4e2"
+egress_address = w3.eth.accounts[2]
+print('egress address: ' + egress_address)
 
 # Endereço do auditor
-auditor_address = "0xA70a148B4df4E66a056fE2F78d6c8083792bB721"
-# Chave privada auditor para assinar a transação (não usar em produção sem proteger a chave)
-auditor_private_key = "0x6d93f018b02f0e8d6cb7d406bebce58778b0f2e1a1d122350418f47ebfebc4e2"
+auditor_address = w3.eth.accounts[3]
+print('auditor address: ' + auditor_address)
 
 # Função para chamar `echo` e emitir o evento
 def call_echo(message):
@@ -58,11 +56,8 @@ def call_echo(message):
         'nonce': w3.eth.get_transaction_count(sender_address),
     })
 
-    # Assina a transação com a chave privada
-    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
-
     # Envia a transação
-    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+    tx_hash = w3.eth.send_transaction(transaction)
 
     return w3.to_hex(tx_hash)
 
@@ -76,11 +71,8 @@ def call_newFlow(newFlowContract):
         'nonce': w3.eth.get_transaction_count(sender_address),
     })
 
-    # Assina a transação com a chave privada
-    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
-
     # Envia a transação
-    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+    tx_hash = w3.eth.send_transaction(transaction)
 
     return w3.to_hex(tx_hash)
 
@@ -95,11 +87,8 @@ def call_setFlowProbeHash(newRefSig):
         'nonce': w3.eth.get_transaction_count(sender_address),
     })
 
-    # Assina a transação com a chave privada
-    signed_transaction = w3.eth.account.sign_transaction(transaction, private_key)
-
     # Envia a transação
-    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+    tx_hash = w3.eth.send_transaction(transaction)
 
     return w3.to_hex(tx_hash)
 
@@ -113,11 +102,18 @@ def call_logFlowProbeHash(newlogProbe):
         'nonce': w3.eth.get_transaction_count(egress_address),
     })
 
-    # Assina a transação com a chave privada
-    signed_transaction = w3.eth.account.sign_transaction(transaction, egress_private_key)
+    # Envia a transação
+    tx_hash = w3.eth.send_transaction(transaction)
 
-    tx_hash = w3.eth.send_raw_transaction(signed_transaction.raw_transaction)
+    return w3.to_hex(tx_hash)
 
+def call_getFlowCompliance(flowId):
+    # Chamar a função `getFlowCompliance`
+    success, fail, nil = contract.functions.getFlowCompliance(flowId).call()    
+
+    return success, fail, nil   
+
+def verify_tx_status(tx_hash):
     tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
     if tx_receipt:
         if tx_receipt['status'] == 1:
@@ -127,13 +123,6 @@ def call_logFlowProbeHash(newlogProbe):
     else:
         print("logProbe: A transação ainda está pendente.")
 
-    return w3.to_hex(tx_hash)
-
-def call_getFlowCompliance(flowId):
-    # Chamar a função `getFlowCompliance`
-    success, fail, nil = contract.functions.getFlowCompliance(flowId).call()    
-
-    return success, fail, nil   
 
 @app.route('/')
 def home():
@@ -159,14 +148,7 @@ def deployFlowContract():
 
     tx_hash = call_newFlow(newFlowContract)
 
-    tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
-    if tx_receipt:
-        if tx_receipt['status'] == 1:
-            print("deployFlowContract: A transação foi executada com sucesso.")
-        else:
-            print("deployFlowContract: A transação falhou.")
-    else:
-        print("deployFlowContract: A transação ainda está pendente.")
+    verify_tx_status(tx_hash)
 
     return jsonify(tx_hash), 201
 
@@ -187,14 +169,7 @@ def setRefSig():
 
     tx_hash = call_setFlowProbeHash(newRefSig)
 
-    tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
-    if tx_receipt:
-        if tx_receipt['status'] == 1:
-            print("setRefSig: A transação foi executada com sucesso.")
-        else:
-            print("setRefSig: A transação falhou.")
-    else:
-        print("setRefSig: A transação ainda está pendente.")
+    verify_tx_status(tx_hash)
 
     return jsonify(tx_hash), 201
 
@@ -215,6 +190,8 @@ def logProbe():
 
     tx_hash = call_logFlowProbeHash(newlogProbe)
 
+    verify_tx_status(tx_hash)
+
     return jsonify(tx_hash), 201
 
 @app.route('/getFlowCompliance/<flowId>', methods=['GET'])
@@ -232,12 +209,3 @@ def setFlowCompliance(flowId):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# Chamadas pelo Controller
-# deployFlowContract(String flowId, String routeId, String edgeAddr)
-# Descrição: Implanta o contrato de fluxo associado a uma rota e a um endereço de borda.
-# setRefSig(String flowId, String routeId, String timestamp, String lightMultSig)
-# Descrição: Define a assinatura de referência para um fluxo e rota específicos, incluindo o timestamp e a assinatura leve múltipla.
-# Chamada pelo Egress Edge
-# logProbe(String flowId, String routeId, String timestamp, String lightMultSig)
-# Descrição: Registra as informações sobre o caminho percorrido pela sonda, incluindo a verificação de conformidade desse trajeto com o caminho previamente definido pelo controller.
