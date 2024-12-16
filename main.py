@@ -34,7 +34,6 @@ abi = data['output']['abi']
 contract = w3.eth.contract(address=contract_address, abi=abi)
 
 ## Ganache accounts ##
-
 # Endereço da controller
 sender_address = w3.eth.accounts[1]
 
@@ -58,6 +57,16 @@ def call_echo(message):
 
     # Envia a transação
     tx_hash = w3.eth.send_transaction(transaction)
+
+    # Espera a transação ser minerada
+    tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+    # Captura os logs do evento Echo
+    logs = contract.events.Echo.create_filter(from_block=tx_receipt['blockNumber'], to_block=tx_receipt['blockNumber']).get_all_entries()
+
+    # Extrai a mensagem do evento
+    for log in logs:
+        print(f"Mensagem do evento Echo: {log['args']['message']}")
 
     return w3.to_hex(tx_hash)
 

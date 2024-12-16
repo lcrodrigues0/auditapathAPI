@@ -104,10 +104,6 @@ contract PoTFactory{
     mapping(string => ProofOfTransit) private flowPOT;
     mapping(string => address) public flowAddr;
 
-    function Hello() public pure returns (string memory){
-        return "Hello";
-    }
-
     event Echo(string message);
 
     function echo(string calldata message) external {

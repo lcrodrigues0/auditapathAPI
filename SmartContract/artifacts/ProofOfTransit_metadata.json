@@ -280,11 +280,11 @@
 	},
 	"sources": {
 		"PoT.sol": {
-			"keccak256": "0x5265365c284f3391f5255aa8b246fde4770a44aca7f081a2cbc07e86ff653710",
+			"keccak256": "0x84b79b7c4b07d274afbbd3d9ff3567eb45910aa5adbe52708caef7e3d42652cc",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://b36716a3e6d9dc9c137f9e75c4fdeb1123abfe8c60644d0d3f441eef03fa5890",
-				"dweb:/ipfs/QmTZiJ9NsJz37gW1TU1WBSpPT5Hm2xQgpHYxxSw5TNXJT3"
+				"bzz-raw://e68a391dcbf10f38bd4ecd25f492575db848251eb60e7bd082625ec6be4883ce",
+				"dweb:/ipfs/QmcECWbYUxduzC4uv8VmijR29MNyUhMYEMo11Ewmvb37N1"
 			]
 		}
 	},
