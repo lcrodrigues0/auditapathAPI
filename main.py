@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from web3 import Web3
+import time
 import json
 import os
 
@@ -17,7 +18,34 @@ else:
     print("Falha na conexão com Ganache.")
 
 ## Endereço do contrato ##
-contract_address = '0x9CC81De7A749502D6B19Af7CD180BeBF3AD65B02'
+
+# Endereço da conta que fez a implantação (pode ser obtido no Remix ou Metamask)
+deployer_address =  w3.eth.accounts[0]
+
+# Função para obter a transação de deploy do contrato
+def get_contract_address(deployer_address, start_block=0, end_block='latest'):    
+    # Obtem o bloco final (ou o último bloco se 'latest' for passado)
+    if end_block == 'latest':
+        end_block = w3.eth.block_number
+    
+    # Iterar pelos blocos entre o intervalo fornecido
+    for block_number in range(start_block, end_block + 1):
+        block = w3.eth.get_block(block_number, full_transactions=True)
+        
+        for tx in block.transactions:
+            # Verifica se o endereço está envolvido na transação
+            if tx['from'].lower() == deployer_address.lower() or tx['to'] and tx['to'].lower() == deployer_address.lower():
+                # Obter o recibo da transação (contém o endereço do contrato)
+                tx_receipt = w3.eth.get_transaction_receipt(tx['hash'])
+                
+                # Se a transação for uma implantação de contrato, obtemos o endereço
+                if tx_receipt['contractAddress']:
+                    contract_address = tx_receipt['contractAddress']
+    
+    return contract_address
+
+contract_address = get_contract_address(deployer_address)
+print(f"Endereço do contrato implantado: {contract_address}")
 
 ## ABI do contrato ## 
  # Path arquivo abi
@@ -39,11 +67,11 @@ sender_address = w3.eth.accounts[1]
 
 # Endereço do nó de saída
 egress_address = w3.eth.accounts[2]
-print('egress address: ' + egress_address)
+print('Endereço do nó de saída: ' + egress_address)
 
 # Endereço do auditor
-auditor_address = w3.eth.accounts[3]
-print('auditor address: ' + auditor_address)
+# auditor_address = w3.eth.accounts[3]
+# print('Endereço para auditor: ' + auditor_address)
 
 # Função para chamar `echo` e emitir o evento
 def call_echo(message):
