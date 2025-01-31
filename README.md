@@ -2,7 +2,7 @@
  
 ### API Endpoints
 * `POST deployFlowContract(String flowId, String routeId, String edgeAddr)`
-* `POST setRefSig(String flowId, String routeId, String`
+* `POST setRefSig(String flowId, String routeId, String refSig`
 * `POST logProbe(String flowId, String routeId, String timestamp, String lightMultSig)`
 * `GET getFlowCompliance(String flowId)`
 
