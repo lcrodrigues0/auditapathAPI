@@ -267,7 +267,7 @@
 		"compilationTarget": {
 			"PoT.sol": "ProofOfTransit"
 		},
-		"evmVersion": "london",
+		"evmVersion": "istanbul",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"

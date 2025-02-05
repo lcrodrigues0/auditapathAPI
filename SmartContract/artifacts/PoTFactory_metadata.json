@@ -187,7 +187,7 @@
 		"compilationTarget": {
 			"PoT.sol": "PoTFactory"
 		},
-		"evmVersion": "london",
+		"evmVersion": "istanbul",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"

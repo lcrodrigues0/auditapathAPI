@@ -21,9 +21,11 @@ else:
 
 # Endereço da conta que fez a implantação (pode ser obtido no Remix ou Metamask)
 deployer_address =  w3.eth.accounts[0]
+print("Endereço da conta que realizou deploy: " + deployer_address)
 
 # Função para obter a transação de deploy do contrato
 def get_contract_address(deployer_address, start_block=0, end_block='latest'):    
+    contract_address = ""
     # Obtem o bloco final (ou o último bloco se 'latest' for passado)
     if end_block == 'latest':
         end_block = w3.eth.block_number
@@ -42,6 +44,10 @@ def get_contract_address(deployer_address, start_block=0, end_block='latest'):
                 if tx_receipt['contractAddress']:
                     contract_address = tx_receipt['contractAddress']
     
+    if contract_address == "":
+        print("Erro na obtenção do endereço do contrato!")
+        exit()
+
     return contract_address
 
 contract_address = get_contract_address(deployer_address)
@@ -197,6 +203,8 @@ def setRefSig():
     if not all(key in data for key in required_keys):   
         return jsonify({"error": "Invalid Data"}), 400
     
+    print(data)
+    
     newRefSig = {
         "flowId": data['flowId'],
         "routeId": data['routeId'],
@@ -218,6 +226,8 @@ def logProbe():
     if not all(key in data for key in required_keys):   
         return jsonify({"error": "Invalid Data"}), 400
     
+    print(data)
+
     newlogProbe = {
         "flowId": data['flowId'],
         "routeId": data['routeId'],
