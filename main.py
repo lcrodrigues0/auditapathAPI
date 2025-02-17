@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from web3 import Web3
+from web3.exceptions import Web3RPCError
 import time
 import json
 import os
@@ -161,10 +162,13 @@ def verify_tx_status(tx_hash):
     if tx_receipt:
         if tx_receipt['status'] == 1:
             print("logProbe: A transação foi executada com sucesso.")
+            return 200
         else:
             print("logProbe: A transação falhou.")
+            return 500
     else:
         print("logProbe: A transação ainda está pendente.")
+        return 202
 
 
 @app.route('/')
@@ -237,12 +241,24 @@ def logProbe():
 
     tx_hash = call_logFlowProbeHash(newlogProbe)
 
-    verify_tx_status(tx_hash)
+    status_http = verify_tx_status(tx_hash)
 
-    return jsonify(tx_hash), 201
+    if(status_http == 200):
+        message = tx_hash
+    else: 
+        try:
+            tx = w3.eth.get_transaction(tx_hash) 
+            w3.eth.call({
+                'to': tx['to'],
+                'data': tx['input']
+            })
+        except Web3RPCError as e:
+            message = e.rpc_response['error']['message']
+    
+    return jsonify(message), status_http
 
 @app.route('/getFlowCompliance/<flowId>', methods=['GET'])
-def setFlowCompliance(flowId):
+def getFlowCompliance(flowId):
     success, fail, nil = call_getFlowCompliance(flowId)
 
     flowCompliance = {
@@ -251,7 +267,7 @@ def setFlowCompliance(flowId):
         "nil": nil, 
     }
 
-    return jsonify(flowCompliance, 201)
+    return jsonify(flowCompliance), 200
 
 
 if __name__ == "__main__":
