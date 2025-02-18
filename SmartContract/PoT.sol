@@ -2,29 +2,23 @@
 pragma solidity >=0.8.17 <0.9.0;
 
 contract ProofOfTransit{
-
-    /* DEV SETTINGS */
-
     address private controller;
-    address private egress_edge;
-    string private current_routeID;
+    uint private startTime;
     
     mapping(string => string) public probHash;
-    mapping(string => logStructure) public route_id_audit;
+    logStructure public current_route_id_audit;
 
     struct logStructure{
         uint probeFailAmount;
         uint probeNullAmount;
         uint probeSuccessAmount;
+
+        string routeId;
+        address egressEdge;
+        uint lastTimestamp;
     }
 
-    struct pastRouteConfig {
-        string route_id;
-        address egress_edge;
-        uint last_timestamp;
-    }
-
-    pastRouteConfig[] public routeIdHistory;
+    logStructure[] public routesHistory;
 
     event ControllerSet(address indexed oldController, address indexed newController);
 
@@ -34,22 +28,22 @@ contract ProofOfTransit{
     }
 
     modifier isEgressEdge(address senderAddr) {
-        require(senderAddr == egress_edge, "Caller is not egress edge");
+        require(senderAddr == current_route_id_audit.egressEdge, "Caller is not egress edge");
         _;
     }
 
     
-    constructor(address controllerAddr, address egress_edgeAddr,string memory routeId) {
-        
-        route_id_audit[routeId].probeFailAmount = 0;
-        route_id_audit[routeId].probeSuccessAmount = 0;
-        route_id_audit[routeId].probeNullAmount = 0;
-
+    constructor(address controllerAddr, address egress_edgeAddr, string memory routeId) {
         controller = controllerAddr;
-        egress_edge = egress_edgeAddr;
-        current_routeID = routeId;
-        routeIdHistory.push(pastRouteConfig(routeId,egress_edgeAddr,block.timestamp));
+        startTime = block.timestamp;
         
+        current_route_id_audit.probeFailAmount = 0;
+        current_route_id_audit.probeSuccessAmount = 0;
+        current_route_id_audit.probeNullAmount = 0;
+
+        current_route_id_audit.egressEdge = egress_edgeAddr;
+        current_route_id_audit.routeId = routeId;
+   
         emit ControllerSet(address(0), controller);
     }
 
@@ -60,10 +54,17 @@ contract ProofOfTransit{
         controller = newController;
     }
 
-    function changeRouteIdAndEgressEdge(string memory newRouteId,address newEgressEdge, address senderAddr) public isController(senderAddr) {
-        routeIdHistory.push(pastRouteConfig(newRouteId,newEgressEdge,block.timestamp));
-        current_routeID = newRouteId;
-        egress_edge = newEgressEdge;
+    function changeRouteIdAndEgressEdge(string memory newRouteId, address newEgressEdge, address senderAddr) public isController(senderAddr) {
+        current_route_id_audit.lastTimestamp = block.timestamp;
+
+        routesHistory.push(current_route_id_audit);
+
+        current_route_id_audit.probeFailAmount = 0;
+        current_route_id_audit.probeSuccessAmount = 0;
+        current_route_id_audit.probeNullAmount = 0;
+
+        current_route_id_audit.egressEdge = newEgressEdge;
+        current_route_id_audit.routeId = newRouteId;
     }
 
     function getController() external view returns (address) {
@@ -78,17 +79,20 @@ contract ProofOfTransit{
 
     function logProbe(string memory id_x,string memory sig, address senderAddr) public isEgressEdge(senderAddr){
         if (compareStrings(probHash[id_x],"")) {
-            route_id_audit[current_routeID].probeNullAmount += 1;
+            current_route_id_audit.probeNullAmount += 1;
         } else if (compareStrings(probHash[id_x],sig)){
-            route_id_audit[current_routeID].probeSuccessAmount += 1;
+            current_route_id_audit.probeSuccessAmount += 1;
         } else {
-            route_id_audit[current_routeID].probeFailAmount += 1;
+            current_route_id_audit.probeFailAmount += 1;
             emit ProbeFail();
         }
     }
 
-    function getCompliance() public view returns (uint,uint,uint) {
-        return (route_id_audit[current_routeID].probeSuccessAmount,route_id_audit[current_routeID].probeFailAmount,route_id_audit[current_routeID].probeNullAmount);
+    function getCompliance() public view returns (uint, uint, uint, string memory) {
+        return (current_route_id_audit.probeSuccessAmount, 
+                current_route_id_audit.probeFailAmount,
+                current_route_id_audit.probeNullAmount,
+                current_route_id_audit.routeId  );
     }
 
 
@@ -100,11 +104,15 @@ contract ProofOfTransit{
 }
 
 contract PoTFactory{
-
     mapping(string => ProofOfTransit) private flowPOT;
     mapping(string => address) public flowAddr;
 
     event Echo(string message);
+
+    modifier isFlowRegistered(string memory flowId){
+        require(flowAddr[flowId] != address(0), "No flow is registered with the provided flow ID");
+        _;
+    }
 
     function echo(string calldata message) external {
         emit Echo(message);
@@ -117,33 +125,30 @@ contract PoTFactory{
         flowAddr[flowId] = address(new_pot);
     }
 
-    function setFlowProbeHash(string memory flowId, string memory id_x, string memory hash) public{
+    function setFlowProbeHash(string memory flowId, string memory id_x, string memory hash) public isFlowRegistered(flowId){
         ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
         
         pot.setProbeHash(id_x,hash,msg.sender);
     }
 
-    function logFlowProbeHash(string memory flowId, string memory id_x, string memory hash) public{
+    function logFlowProbeHash(string memory flowId, string memory id_x, string memory hash) public isFlowRegistered(flowId){
         ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
         
         pot.logProbe(id_x,hash,msg.sender);
     }
 
-
-    function setRouteId(string memory flowId,string memory newRouteID, address newEgressEdge) public{
+    function setRouteId(string memory flowId, string memory newRouteID, address newEgressEdge) public isFlowRegistered(flowId){
         ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
         
-        pot.changeRouteIdAndEgressEdge(newRouteID,newEgressEdge,msg.sender);
+        pot.changeRouteIdAndEgressEdge(newRouteID, newEgressEdge, msg.sender);
     }
 
-
-    function getFlowCompliance(string memory flowId) public view returns (uint success, uint fail, uint nil){
+    function getFlowCompliance(string memory flowId) public view isFlowRegistered(flowId) returns (uint success, uint fail, uint nil, string memory routeId){
         ProofOfTransit pot = ProofOfTransit(flowPOT[flowId]);
 
-        (success, fail, nil) = pot.getCompliance();
+        (success, fail, nil, routeId) = pot.getCompliance();
 
-        return (success, fail, nil);
-
+        return (success, fail, nil, routeId);
     }
 
 }

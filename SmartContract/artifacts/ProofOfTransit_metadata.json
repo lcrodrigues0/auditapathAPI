@@ -94,6 +94,44 @@
 			},
 			{
 				"inputs": [],
+				"name": "current_route_id_audit",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "probeFailAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "probeNullAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "probeSuccessAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "routeId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "egressEdge",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lastTimestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "getCompliance",
 				"outputs": [
 					{
@@ -110,6 +148,11 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -178,36 +221,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "routeIdHistory",
-				"outputs": [
-					{
-						"internalType": "string",
-						"name": "route_id",
-						"type": "string"
-					},
-					{
-						"internalType": "address",
-						"name": "egress_edge",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "last_timestamp",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "",
-						"type": "string"
-					}
-				],
-				"name": "route_id_audit",
+				"name": "routesHistory",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -222,6 +236,21 @@
 					{
 						"internalType": "uint256",
 						"name": "probeSuccessAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "routeId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "egressEdge",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lastTimestamp",
 						"type": "uint256"
 					}
 				],
@@ -280,11 +309,11 @@
 	},
 	"sources": {
 		"PoT.sol": {
-			"keccak256": "0x84b79b7c4b07d274afbbd3d9ff3567eb45910aa5adbe52708caef7e3d42652cc",
+			"keccak256": "0x43b363a5134948556c51c86a98b6e831b14623214f52012a19b5192ef8bb94e8",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://e68a391dcbf10f38bd4ecd25f492575db848251eb60e7bd082625ec6be4883ce",
-				"dweb:/ipfs/QmcECWbYUxduzC4uv8VmijR29MNyUhMYEMo11Ewmvb37N1"
+				"bzz-raw://b84ce60a2583a3a0bc931301b01f5f8b97a9c6cf6e75504a417ced7ffbe45a7a",
+				"dweb:/ipfs/Qmd33YpKiLrst9wiiXk6bPXfKTjgqPERejA43KDje4MxDX"
 			]
 		}
 	},

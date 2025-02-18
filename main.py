@@ -2,9 +2,8 @@ from flask import Flask, jsonify, request
 from flask_restful import Api
 from web3 import Web3
 from web3.exceptions import Web3RPCError
-import time
 import json
-import os
+from http import HTTPStatus
 
 app = Flask(__name__)
 api = Api(app)
@@ -152,23 +151,36 @@ def call_logFlowProbeHash(newlogProbe):
     return w3.to_hex(tx_hash)
 
 def call_getFlowCompliance(flowId):
-    # Chamar a função `getFlowCompliance`
-    success, fail, nil = contract.functions.getFlowCompliance(flowId).call()    
+    # Chama a função `getFlowCompliance`
 
-    return success, fail, nil   
+    result = {}
+    try:
+        success, fail, nil, routeId = contract.functions.getFlowCompliance(flowId).call()   
+        status = HTTPStatus.OK
+
+        result["success"] = success
+        result["fail"] = fail
+        result["nil"] = nil
+        result["routeId"] = routeId
+
+    except Web3RPCError as e:
+        status = HTTPStatus.INTERNAL_SERVER_ERROR
+        result = e.rpc_response['error']['message']
+    
+    return status, result
 
 def verify_tx_status(tx_hash):
     tx_receipt = w3.eth.get_transaction_receipt(tx_hash)
     if tx_receipt:
         if tx_receipt['status'] == 1:
             print("logProbe: A transação foi executada com sucesso.")
-            return 200
+            return HTTPStatus.OK
         else:
             print("logProbe: A transação falhou.")
-            return 500
+            return HTTPStatus.INTERNAL_SERVER_ERROR
     else:
         print("logProbe: A transação ainda está pendente.")
-        return 202
+        return HTTPStatus.ACCEPTED
 
 
 @app.route('/')
@@ -185,7 +197,7 @@ def deployFlowContract():
     data = request.get_json()
 
     if 'flowId' not in data or 'routeId' not in data or 'edgeAddr' not in data:
-        return jsonify({"error": "Invalid Data"}), 400
+        return jsonify({"error": "Invalid Data"}), HTTPStatus.BAD_REQUEST
     
     newFlowContract = {
         "flowId": data['flowId'],
@@ -197,7 +209,7 @@ def deployFlowContract():
 
     verify_tx_status(tx_hash)
 
-    return jsonify(tx_hash), 201
+    return jsonify(tx_hash), HTTPStatus.CREATED
 
 @app.route('/setRefSig', methods=['POST'])
 def setRefSig():
@@ -205,7 +217,7 @@ def setRefSig():
 
     required_keys = ['flowId', 'routeId', 'timestamp', 'lightMultSig']
     if not all(key in data for key in required_keys):   
-        return jsonify({"error": "Invalid Data"}), 400
+        return jsonify({"error": "Invalid Data"}), HTTPStatus.BAD_REQUEST
     
     print(data)
     
@@ -220,7 +232,7 @@ def setRefSig():
 
     verify_tx_status(tx_hash)
 
-    return jsonify(tx_hash), 201
+    return jsonify(tx_hash), HTTPStatus.CREATED
 
 @app.route('/logProbe', methods=['POST'])
 def logProbe():
@@ -228,7 +240,7 @@ def logProbe():
 
     required_keys = ['flowId', 'routeId', 'timestamp', 'lightMultSig']
     if not all(key in data for key in required_keys):   
-        return jsonify({"error": "Invalid Data"}), 400
+        return jsonify({"error": "Invalid Data"}), HTTPStatus.BAD_REQUEST
     
     print(data)
 
@@ -243,7 +255,7 @@ def logProbe():
 
     status_http = verify_tx_status(tx_hash)
 
-    if(status_http == 200):
+    if(status_http == HTTPStatus.OK):
         message = tx_hash
     else: 
         try:
@@ -259,15 +271,22 @@ def logProbe():
 
 @app.route('/getFlowCompliance/<flowId>', methods=['GET'])
 def getFlowCompliance(flowId):
-    success, fail, nil = call_getFlowCompliance(flowId)
+    status, result = call_getFlowCompliance(flowId)
 
-    flowCompliance = {
-        "success": success, 
-        "fail": fail,
-        "nil": nil, 
-    }
+    if status == HTTPStatus.OK:
+        response = [
+            {
+                "success": result["success"], 
+                "fail": result["fail"],
+                "nil": result["nil"], 
+            }, 
+            result["routeId"] 
+        ]
+    else:
+        response = result
 
-    return jsonify(flowCompliance), 200
+    
+    return jsonify(response), status
 
 
 if __name__ == "__main__":
